@@ -1,0 +1,37 @@
+#!/bin/bash
+
+trap ctrl_c SIGINT
+function ctrl_c {
+        echo -e "\n[!] Saliendo..."
+        exit
+}
+echo -n "[?] Selecciona un día de la semana del 1 al 5 [1 (Lunes), ... 5 (Viernes]: " && read day
+if [[ "$day" -lt 1 || "$day" -gt 5 ]]; then
+	echo "[!] Elige un día del 1 al 5 [1 (Lunes), ... 5 (Viernes]" && ctrl_c
+fi
+echo -n "[?] Escribe la hora de la primera sesión xx:30 [7-21]: " && read hours
+if [[ "$hours" -lt 7 || "$hours" -gt 21 ]]; then
+        echo "[!] Elige entre los rangos especificados"
+	ctrl_c
+fi
+echo -n "[?] Elige la cantidad de horas a reservar a partir de la primera [1-3]: " && read size
+if [[ "$size" -lt 1 || "$size" -gt 3 ]]; then
+	echo "[!] Elige entre los rangos especificados"
+	ctrl_c
+fi
+if [[ $(( $hours + $size )) -gt 21 ]]; then
+	echo -n "[!] La cantidad de horas a reservar se pasan de la úliima hora disponible [21:30-22:30]" && ctrl_c
+fi
+case $day in
+	1) echo "[+] Has seleccionado $size hora/s a partir de las $hours:30 del lunes" ;;
+	2) echo "[+] Has seleccionado $size hora/s a partir de las $hours:30 del martes" ;;
+	3) echo "[+] Has seleccionado $size hora/s a partir de las $hours:30 del miercoles" ;;
+	4) echo "[+] Has seleccionado $size hora/s a partir de las $hours:30 del jueves" ;;
+	5) echo "[+] Has seleccionado $size hora/s a partir de las $hours:30 del viernes" ;;
+esac
+ids=$(( ($day - 1) * 15 + 1 + $hours - 7)) 
+for ((i=0; i<size; i++)); do
+	( echo -n "MUS0" && echo $ids ) >> .hours.txt
+	ids=$((ids + 1))
+done
+echo "[+] Horas escritas correctamente en .hours.txt"

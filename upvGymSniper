@@ -1,0 +1,58 @@
+#!/bin/bash
+trap ctrl_c SIGINT
+function ctrl_c {
+	echo -e "\n[!] Saliendo..."
+	unlogin
+	exit
+}
+function login {
+	curl -L -s -X POST "https://intranet.upv.es/pls/soalu/est_aute.intraalucomp" \
+	  -H "Host: intranet.upv.es" \
+	  -H "Content-Type: application/x-www-form-urlencoded" \
+	  -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.6613.120 Safari/537.36" \
+	  -H "Referer: https://intranet.upv.es/pls/soalu/est_intranet.NI_Portal_n?p_idioma=c" \
+	  -H "Origin: https://intranet.upv.es" \
+	  -c cookies.txt \
+	  --data @data.txt
+}
+function groupNumber {
+
+	curl -s "https://intranet.upv.es/pls/soalu/sic_depact.HSemActividades?p_campus=V&p_codacti=21809&p_vista=intranet&p_idioma=c&p_tipoact=6846&p_solo_matricula_sn=&p_anc=filtro_actividad" -b cookies.txt | grep "$1" | grep -o 'p_codgrupo_mat=[A-Fa-f0-9]*' | grep -o '[A-Fa-f0-9]*$'
+
+}
+function unlogin {
+	curl -s -L "https://intranet.upv.es/bin2/intranet/expira_intranet/alumno?c" -b cookies.txt > /dev/null
+
+	rm cookies.txt 2>/dev/null
+}
+curl intranet.upv.es &>/dev/null
+if [ $? -ne 0 ]; then
+	echo "[!] Comprueba tu conexión a internet."
+	echo "[!] Saliendo..."
+	unlogin
+	exit
+fi
+if [ ! -f data.txt ]; then
+	echo "[!] Datos de inicio de sesión no encontrados, vamos a generarlos..."
+	echo -n "[?] Introduce tu usuario/DNI: " && read user
+	echo -n "[?] Introduce tu contraseña: " && read pass
+	echo "iehack=%E2%98%A0&id=c&estilo=500&vista=&param=&cua=miupv&dni=$user&clau=$pass" > data.txt
+fi
+if [ ! -f .hours.txt ]; then
+	echo -n "[!] Ejecuta ./hoursID para elegir las horas a reservar" && ctrl_c
+fi
+login | grep Error &>/dev/null && echo -n "[!] Error al iniciar sesión, comprueba credenciales o cambia de red" && ctrl_c
+echo -n "[?] Introduce el tiempo de espera entre solicitudes: " && read sleeptime
+while read line; do
+	while true; do
+		identificator=$(groupNumber $line)
+		if [ $identificator ]; then
+			curl -s "https://intranet.upv.es/pls/soalu/sic_depact.HSemActMatri?p_campus=V&p_codacti=21809&p_codgrupo_mat=${identificator}&p_vista=intranet&p_tipoact=6846&p_idioma=c" -b cookies.txt
+			echo "[+] Reservada hora $line con identificador $identificator a la hora y fecha: $(date)"			
+			break
+		fi
+	sleep $sleeptime
+	done
+done < .hours.txt
+echo "[+] Horas reservadas"
+unlogin
