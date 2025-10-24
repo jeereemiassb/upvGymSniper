@@ -61,8 +61,8 @@ Sigue las preguntas por consola para seleccionar día, hora y duración. El scri
 Cada línea debe contener el identificador en el formato `MUS0NN` generado por `hoursID`. Ejemplo:
 
 ```
-MUS0123
-MUS0124
+MUS001
+MUS002
 ```
 
 ---
