@@ -79,6 +79,13 @@ MUS002
 
 ---
 
+## Recomendaciones de uso
+
+- Ajusta el tiempo de espera a no menos de 5 segundos para evitar bloqueos por parte de la intranet
+- Procura ejecutarlo por lo menos 1 hora y media antes del comienzo de la primer hora deseada para asegurar la reserva
+
+---
+
 ## Contacto / notas
 
 Para dudas técnicas sobre el script o ayuda para adaptarlo, comenta en el repositorio.
