@@ -34,14 +34,14 @@ if [ $? -ne 0 ]; then
 fi
 if [ ! -f data.txt ]; then
 	echo "[!] Datos de inicio de sesión no encontrados, vamos a generarlos..."
-	echo -n "[?] Introduce tu usuario/DNI: " && read user
-	echo -n "[?] Introduce tu contraseña: " && read pass
+	echo -n "[?] Introduce tu usuario/DNI: " && read -r user
+	echo -n "[?] Introduce tu contraseña: " && read -r pass
 	echo "iehack=%E2%98%A0&id=c&estilo=500&vista=&param=&cua=miupv&dni=$user&clau=$pass" > data.txt
 fi
 if [ ! -f .hours.txt ]; then
 	echo -n "[!] Ejecuta ./hoursID para elegir las horas a reservar" && ctrl_c
 fi
-login | grep Error &>/dev/null && echo -n "[!] Error al iniciar sesión, comprueba credenciales o cambia de red" && ctrl_c
+login | grep Error &>/dev/null && echo -n "[!] Error al iniciar sesión, comprueba credenciales o cambia de red" && rm data.txt && ctrl_c
 echo -n "[?] Introduce el tiempo de espera entre solicitudes: " && read sleeptime
 while read line; do
 	while true; do

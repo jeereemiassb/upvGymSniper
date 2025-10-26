@@ -19,7 +19,7 @@ if [[ "$size" -lt 1 || "$size" -gt 3 ]]; then
 	echo "[!] Elige entre los rangos especificados"
 	ctrl_c
 fi
-if [[ $(( $hours + $size )) -gt 21 ]]; then
+if [[ $(( $hours + $size )) -gt 22 ]]; then
 	echo -n "[!] La cantidad de horas a reservar se pasan de la úliima hora disponible [21:30-22:30]" && ctrl_c
 fi
 case $day in
