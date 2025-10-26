@@ -5,6 +5,7 @@ function ctrl_c {
         echo -e "\n[!] Saliendo..."
         exit
 }
+echo  "[!] Atencion, este script no sobreescribe el archivo .hours.txt, solo agrega horas. Para reiniciarlo simplemente borralo"
 echo -n "[?] Selecciona un día de la semana del 1 al 5 [1 (Lunes), ... 5 (Viernes]: " && read day
 if [[ "$day" -lt 1 || "$day" -gt 5 ]]; then
 	echo "[!] Elige un día del 1 al 5 [1 (Lunes), ... 5 (Viernes]" && ctrl_c
@@ -31,7 +32,11 @@ case $day in
 esac
 ids=$(( ($day - 1) * 15 + 1 + $hours - 7)) 
 for ((i=0; i<size; i++)); do
-	( echo -n "MUS0" && echo $ids ) >> .hours.txt
+	if [[ $ids -lt 10 ]]; then
+		( echo -n "MUS00" && echo $ids ) >> .hours.txt
+	else
+		( echo -n "MUS0" && echo $ids ) >> .hours.txt
+	fi
 	ids=$((ids + 1))
 done
 echo "[+] Horas escritas correctamente en .hours.txt"
