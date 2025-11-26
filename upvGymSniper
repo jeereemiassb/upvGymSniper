@@ -53,6 +53,6 @@ while read line; do
 		fi
 	sleep $sleeptime
 	done
-done < .hours.txt
+done < hours.txt
 echo "[+] Horas reservadas"
 unlogin
