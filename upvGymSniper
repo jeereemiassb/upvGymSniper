@@ -38,7 +38,7 @@ if [ ! -f data.txt ]; then
 	echo -n "[?] Introduce tu contraseña: " && read -r pass
 	echo "iehack=%E2%98%A0&id=c&estilo=500&vista=&param=&cua=miupv&dni=$user&clau=$pass" > data.txt
 fi
-if [ ! -f .hours.txt ]; then
+if [ ! -f hours.txt ]; then
 	echo -n "[!] Ejecuta ./hoursID para elegir las horas a reservar" && ctrl_c
 fi
 login | grep Error &>/dev/null && echo -n "[!] Error al iniciar sesión, comprueba credenciales o cambia de red" && rm data.txt && ctrl_c
