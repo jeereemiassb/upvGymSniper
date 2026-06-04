@@ -25,6 +25,13 @@ function unlogin {
 
 	rm cookies.txt 2>/dev/null
 }
+
+while getopts "d:" args; do
+        case $args in
+                d)delay=$OPTARG;;
+        esac
+done
+
 curl intranet.upv.es &>/dev/null
 if [ $? -ne 0 ]; then
 	echo "[!] Comprueba tu conexión a internet."
@@ -42,7 +49,13 @@ if [ ! -f hours.txt ]; then
 	echo -n "[!] Ejecuta ./hoursID para elegir las horas a reservar" && ctrl_c
 fi
 login | grep Error &>/dev/null && echo -n "[!] Error al iniciar sesión, comprueba credenciales o cambia de red" && rm data.txt && ctrl_c
-echo -n "[?] Introduce el tiempo de espera entre solicitudes: " && read sleeptime
+if [ -z "$delay" ]; then
+        echo "[!] Tiempo de espera entre solicitudes no declarado, usando 5 segundos. (declaralo usando el parametro -d)"
+        delay=5
+else
+        echo "[!] Tiempo de espera entre solicitudes: ${delay}s"
+fi
+echo "[+] Capturando reservas..."
 while read line; do
 	while true; do
 		identificator=$(groupNumber $line)
@@ -51,7 +64,7 @@ while read line; do
 			echo "[+] Reservada hora $line con identificador $identificator a la hora y fecha: $(date)"			
 			break
 		fi
-	sleep $sleeptime
+	sleep $delay
 	done
 done < hours.txt
 echo "[+] Horas reservadas"
